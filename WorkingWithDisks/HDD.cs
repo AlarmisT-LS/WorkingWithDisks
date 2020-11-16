@@ -6,29 +6,69 @@ namespace WorkingWithDisks
 {
     class HDD : Storage
     {
-        public string Speed { get; set; }
-        public int NumberOfSections { get; set; }
-        public int VolumeOfSections { get; set; }
+        public decimal SpeedUsb2 { get; } = 480000;
+        List<Section> sections;
 
-
-        public override void CopyDataToDevice()
+        public HDD(string mediaName, string model, Section memorySize) : base(mediaName, model)
         {
-            throw new NotImplementedException();
+            sections.Add(memorySize);
+        }
+        public HDD(string mediaName, string model, List<Section> memorySize) : base(mediaName, model)
+        {
+            sections = memorySize;
         }
 
-        public override void GetInfoDevice()
+        public override decimal GettingMemorySize()
         {
-            throw new NotImplementedException();
+            decimal sum = 0;
+            foreach (var i in sections)
+            {
+                sum += i.BitSize;
+            }
+            return sum;
         }
 
-        public override void GettingMemorySize()
+        public override void CopyDataToDevice(decimal bitfile)
         {
-            throw new NotImplementedException();
+            //TODO допустим файлы копируются на первый раздел на котором есть место под файл
+            bool flagOperation = false;
+            foreach (var i in sections)
+            {
+                try
+                {
+                    i.BitBusy += bitfile;
+                    flagOperation = true;
+                    break;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            if (flagOperation == false)
+            {
+                throw new Exception("Нет разделов с достаточным количеством памяти для файла");
+            }
         }
 
-        public override void SpareMemoryOnTheDevice()
+        public override decimal SpareMemoryOnTheDevice()
         {
-            throw new NotImplementedException();
+            decimal sum = 0;
+            foreach (var i in sections)
+            {
+                sum += (i.BitSize - i.BitBusy);
+            }
+            return sum;
+        }
+
+        public override string GetInfoDevice()
+        {
+            return
+                $"Наименование носителя:{MediaName}\n" +
+                $"Модель:{Model}\n" +
+                $"Скорость USB 2.0:{SpeedUsb2}\n" +
+                $"Кол-во разделов:{sections.Count}\n" +
+                $"Объём разделов:{GettingMemorySize()} бит\n";
         }
     }
 }

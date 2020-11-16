@@ -6,29 +6,40 @@ namespace WorkingWithDisks
 {
     class DVD : Storage
     {
-        public string ReadingSpeed { get; set; }
-        public string RecordingSpeed { get; set; }
+        public int ReadingSpeed { get; } = 1385000;
+        public int RecordingSpeed { get; } = 1385000;
         public string Type { get; set; }
+        private Section section;
 
-
-        public override void CopyDataToDevice()
+        public DVD(string mediaName, string model, string type, Section section) : base(mediaName, model)
         {
-            throw new NotImplementedException();
+            this.section = section;
+            Type = type;
         }
 
-        public override void GetInfoDevice()
+        public override void CopyDataToDevice(decimal bitfile)
         {
-            throw new NotImplementedException();
+            section.BitBusy += bitfile;
         }
 
-        public override void GettingMemorySize()
+        public override string GetInfoDevice()
         {
-            throw new NotImplementedException();
+            return
+                $"Наименование носителя:{MediaName}\n" +
+                $"Модель:{Model}\n" +
+                $"Скорость чтения:{ReadingSpeed} бит" +
+                $"Скорость записи:{RecordingSpeed} бит" +
+                $"Объем памяти:{GettingMemorySize()} бит";
         }
 
-        public override void SpareMemoryOnTheDevice()
+        public override decimal GettingMemorySize()
         {
-            throw new NotImplementedException();
+            return section.BitSize;
+        }
+
+        public override decimal SpareMemoryOnTheDevice()
+        {
+            return section.BitSize - section.BitBusy;
         }
     }
 }

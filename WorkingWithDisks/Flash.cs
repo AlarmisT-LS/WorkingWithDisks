@@ -6,28 +6,43 @@ namespace WorkingWithDisks
 {
     class Flash : Storage
     {
-        public string Speed { get; set; }
-        public string MemorySize { get; set; }
+        public long SpeedUsb3 { get; } = 5000000000; //TODO Usb 3.0 = 5.e+9 Бит
+        //private decimal memorySize;
+        //private decimal MemoryOccupied = 0;
+        private Section section;
 
-
-        public override void CopyDataToDevice()
+        public Flash(string mediaName, string model, Section section) : base(mediaName, model)
         {
-            throw new NotImplementedException();
+            this.section = section;
         }
 
-        public override void GetInfoDevice()
+        public override void CopyDataToDevice(decimal bitfile)
         {
-            throw new NotImplementedException();
+            if (bitfile < 0)
+                throw new Exception("Не может быть вес файла меньше 0!");
+            else if (SpareMemoryOnTheDevice() >= bitfile)
+                section.BitBusy += bitfile;
+            else if (SpareMemoryOnTheDevice() < bitfile)
+                throw new Exception("Недостаточно памяти!");
         }
 
-        public override void GettingMemorySize()
+        public override string GetInfoDevice()
         {
-            throw new NotImplementedException();
+            return
+                $"Наименование носителя:{MediaName}\n" +
+                $"Модель:{Model}\n" +
+                $"Скорость USB 3.0:{SpeedUsb3}\n" +
+                $"Объем памяти:{GettingMemorySize()} бит\n";
         }
 
-        public override void SpareMemoryOnTheDevice()
+        public override decimal GettingMemorySize()
         {
-            throw new NotImplementedException();
+            return section.BitSize;
+        }
+
+        public override decimal SpareMemoryOnTheDevice()
+        {
+            return section.BitSize - section.BitBusy;
         }
 
 
