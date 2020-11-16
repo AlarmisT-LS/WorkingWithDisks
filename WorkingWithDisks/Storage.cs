@@ -23,6 +23,6 @@ namespace WorkingWithDisks
         //получение информации о свободном объеме памяти на устройстве
         public abstract decimal SpareMemoryOnTheDevice();
         //получение общей/полной информации об устройстве
-        public abstract string GetInfoDevice();
+        public abstract (string mediaName, string model, decimal speed, decimal bitSize, decimal bitBusy) GetInfoDevice();
     }
 }

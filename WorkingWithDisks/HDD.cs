@@ -11,6 +11,7 @@ namespace WorkingWithDisks
 
         public HDD(string mediaName, string model, Section memorySize) : base(mediaName, model)
         {
+            sections = new List<Section>();
             sections.Add(memorySize);
         }
         public HDD(string mediaName, string model, List<Section> memorySize) : base(mediaName, model)
@@ -30,14 +31,15 @@ namespace WorkingWithDisks
 
         public override void CopyDataToDevice(decimal bitfile)
         {
-            //TODO допустим файлы копируются на первый раздел на котором есть место под файл
-            bool flagOperation = false;
+            if (bitfile < 0)
+                throw new Exception("Не может быть вес файла меньше 0!\n");
+            bool flagOperation = true;
             foreach (var i in sections)
             {
                 try
                 {
                     i.BitBusy += bitfile;
-                    flagOperation = true;
+                    flagOperation = false;
                     break;
                 }
                 catch (Exception)
@@ -45,9 +47,9 @@ namespace WorkingWithDisks
 
                 }
             }
-            if (flagOperation == false)
+            if (flagOperation)
             {
-                throw new Exception("Нет разделов с достаточным количеством памяти для файла");
+                throw new Exception("Нет разделов с достаточным количеством памяти для файла\n");
             }
         }
 
@@ -61,14 +63,9 @@ namespace WorkingWithDisks
             return sum;
         }
 
-        public override string GetInfoDevice()
+        public override (string mediaName, string model, decimal speed, decimal bitSize, decimal bitBusy) GetInfoDevice()
         {
-            return
-                $"Наименование носителя:{MediaName}\n" +
-                $"Модель:{Model}\n" +
-                $"Скорость USB 2.0:{SpeedUsb2}\n" +
-                $"Кол-во разделов:{sections.Count}\n" +
-                $"Объём разделов:{GettingMemorySize()} бит\n";
+            return (MediaName, Model, SpeedUsb2, GettingMemorySize(), GettingMemorySize() - SpareMemoryOnTheDevice());
         }
     }
 }
