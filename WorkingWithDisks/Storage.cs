@@ -6,7 +6,7 @@ namespace WorkingWithDisks
 {
     abstract class Storage
     {
-        public string MediaName { get; set; } 
+        public string MediaName { get; set; }
         public string Model { get; set; }
 
         //получение объема памяти
@@ -17,22 +17,5 @@ namespace WorkingWithDisks
         public abstract void SpareMemoryOnTheDevice();
         //получение общей/полной информации об устройстве
         public abstract void GetInfoDevice();
-
-
-
-
-
-
-
-
-
-
-
-
-        //TODO
-        //public void CalculatingTheTotalAmountMemory();
-        //public void CalculationCarriersForTransferringInformation();
-        //public void CalculationOfTheTimeRequiredForCopying();
-        //public void CopyingInformationToDevice();
     }
 }
